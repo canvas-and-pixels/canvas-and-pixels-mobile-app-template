@@ -1,1 +1,1 @@
-export 'network_service.dart';
+export 'network/network_service.dart';

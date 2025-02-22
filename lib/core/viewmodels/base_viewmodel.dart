@@ -7,6 +7,13 @@ enum ViewState {
   error,
 }
 
+extension ViewStateExtension on ViewState {
+  bool get isIdle => this == ViewState.idle;
+  bool get isLoading => this == ViewState.loading;
+  bool get isSuccess => this == ViewState.success;
+  bool get isError => this == ViewState.error;
+}
+
 class BaseViewModel<T> extends StateNotifier<ViewModelState<T>> {
   BaseViewModel() : super(ViewModelState<T>(state: ViewState.idle));
 
