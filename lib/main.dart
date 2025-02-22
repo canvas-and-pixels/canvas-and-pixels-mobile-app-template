@@ -12,16 +12,17 @@ void main() async {
   await CacheManager.init();
   AppLogger.init(); // Default: logs everything
   //  await FirebaseNotificationService().init();
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
+// ignore: must_be_immutable
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
+  ThemeMode themeMode = ThemeMode.system;
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    ThemeMode _themeMode = ThemeMode.system;
     return ScreenUtilInit(
       designSize: const Size(360, 690),
       minTextAdapt: true,
@@ -32,7 +33,7 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,
-          themeMode: _themeMode, // Auto-switch based on system settings
+          themeMode: themeMode, // Auto-switch based on system settings
           initialRoute: SplashScreen.route,
           onGenerateRoute: generateRoute,
           navigatorKey: NavigationService().navigatorKey,
