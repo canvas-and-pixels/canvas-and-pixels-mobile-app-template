@@ -40,4 +40,6 @@ abstract class INotificationService {
   Future<void> cancelAllNotifications();
 
   Future<String?> getPushToken();
+
+  void onForegroundMessage(Function(Map<String, dynamic> message) callback);
 }

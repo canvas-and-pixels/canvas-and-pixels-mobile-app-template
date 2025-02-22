@@ -12,7 +12,6 @@ class FirebaseNotificationsService implements INotificationService {
 
   @override
   Future<void> cancelAllNotifications() async {
-    
     throw UnimplementedError();
   }
 
@@ -29,9 +28,10 @@ class FirebaseNotificationsService implements INotificationService {
   }
 
   @override
-  Future<void> initialize() {
-    // TODO: implement initialize
-    throw UnimplementedError();
+  Future<void> initialize() async {
+    await _requestPermission();
+    await _configureLocalNotifications();
+    await _initializeFCM();
   }
 
   @override
@@ -130,6 +130,30 @@ class FirebaseNotificationsService implements INotificationService {
     // Handle when the app is in the background and tapped
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       AppLogger.success('Notification Opened: ${message.notification?.title}');
+    });
+  }
+
+  /// Configures local notifications for showing push messages when in foreground.
+  Future<void> _configureLocalNotifications() async {
+    const AndroidInitializationSettings androidInit =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+    const DarwinInitializationSettings iosInit = DarwinInitializationSettings();
+
+    const InitializationSettings initSettings = InitializationSettings(
+      android: androidInit,
+      iOS: iosInit,
+    );
+
+    await _localNotifications.initialize(initSettings);
+  }
+
+  @override
+  void onForegroundMessage(Function(Map<String, dynamic> message) callback) {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      if (message.notification != null) {
+        _showLocalNotification(message);
+      }
+      callback(message.data);
     });
   }
 }
