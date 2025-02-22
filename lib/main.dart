@@ -1,6 +1,7 @@
 import 'package:canvas_and_pixels_mobile_app_template/app.dart';
 import 'package:canvas_and_pixels_mobile_app_template/features/splashscreen/splashscreen.dart';
 import 'package:canvas_and_pixels_mobile_app_template/shared/shared.dart';
+import 'package:canvas_and_pixels_mobile_app_template/shared/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -9,6 +10,8 @@ import 'core/core.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await CacheManager.init();
+  AppLogger.init(); // Default: logs everything
+  //  await FirebaseNotificationService().init();
   runApp(const MyApp());
 }
 
