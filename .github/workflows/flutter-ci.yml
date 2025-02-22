@@ -1,0 +1,63 @@
+name: Flutter CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.x'  # Change this to your Flutter version
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze code
+        run: flutter analyze
+
+      - name: Run tests
+        run: flutter test
+
+      - name: Build APK
+        run: flutter build apk --release
+
+      - name: Upload APK as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-release.apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+
+  notify-testers:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Notification via Slack
+        if: success()
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: "https://hooks.slack.com/services/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"
+          SLACK_MESSAGE: "🚀 New APK build is ready! Download it here: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+      # - name: Send Email Notification (Optional)
+      #   uses: dawidd6/action-send-mail@v3
+      #   if: success()
+      #   with:
+      #     server_address: smtp.gmail.com
+      #     server_port: 587
+      #     username: ${{ secrets.EMAIL_USERNAME }}
+      #     password: ${{ secrets.EMAIL_PASSWORD }}
+      #     subject: "🚀 New APK Build Available"
+      #     body: "A new build is ready. Download it from GitHub Actions."
+      #     to: "testers@example.com"
+      #     from: "Your App Team"
