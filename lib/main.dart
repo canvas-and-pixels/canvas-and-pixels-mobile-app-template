@@ -3,6 +3,7 @@ import 'package:canvas_and_pixels_mobile_app_template/features/splashscreen/spla
 import 'package:canvas_and_pixels_mobile_app_template/shared/shared.dart';
 import 'package:canvas_and_pixels_mobile_app_template/shared/utils/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'core/core.dart';
@@ -12,7 +13,11 @@ void main() async {
   await CacheManager.init();
   AppLogger.init(); // Default: logs everything
   //  await FirebaseNotificationService().init();
-  runApp(MyApp());
+  runApp(
+    ProviderScope(
+      child: MyApp(),
+    ),
+  );
 }
 
 // ignore: must_be_immutable
