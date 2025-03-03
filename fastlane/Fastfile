@@ -1,0 +1,53 @@
+default_platform(:android)
+
+platform :android do
+  desc "Deploy Android app to Play Store"
+  lane :deploy_android do
+    # Ensure we're on the main branch
+    ensure_git_branch(branch: 'main')
+
+    # Increment version code
+    increment_version_code(
+      version_code: get_version_code
+    )
+
+    # Build release APK
+    gradle(
+      task: 'clean assembleRelease',
+      project_dir: 'android/'
+    )
+
+    # Upload to Play Store
+    upload_to_play_store(
+      track: 'internal',  # or 'alpha', 'beta', 'production'
+      json_key: ENV['PLAY_STORE_CONFIG_JSON'],
+      aab: 'android/app/build/outputs/bundle/release/app-release.aab',
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+
+    # Tag the release
+    add_git_tag(
+      tag: "v#{get_version_name}",
+      message: "Release v#{get_version_name}"
+    )
+    push_git_tags
+  end
+
+  desc "Run tests"
+  lane :test do
+    gradle(
+      task: 'test',
+      project_dir: 'android/'
+    )
+  end
+
+  desc "Build release APK"
+  lane :build_apk do
+    gradle(
+      task: 'clean assembleRelease',
+      project_dir: 'android/'
+    )
+  end
+end 
